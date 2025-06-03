@@ -50,12 +50,12 @@ resource "aws_ecs_task_definition" "jeeva_task" {
 }
 
 
-# Security group 
+# Security group
 
 resource "aws_security_group" "ecs_sg" {
   name        = "ecs_sg"
   description = "Allow HTTP"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 80
@@ -74,8 +74,7 @@ resource "aws_security_group" "ecs_sg" {
 
 
 
-# Service 
-
+# Service
 
 resource "aws_ecs_service" "jeeva_service" {
   name            = "nginx-service"
@@ -85,10 +84,8 @@ resource "aws_ecs_service" "jeeva_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = [aws_subnet.public_1.id, aws_subnet.public_2.id]
+    subnets         = var.subnet_ids
     security_groups = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
   }
 }
-
-
